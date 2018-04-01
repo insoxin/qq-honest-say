@@ -1,0 +1,179 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" name="viewport" />
+    <meta name="description" content="QQ坦白说，粘贴查询即可知道是谁给你发的坦白说">
+    <title>QQ坦白说查询</title>
+	<link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+	<link href="https://cdn.bootcss.com/bootstrap-table/1.11.1/bootstrap-table.min.css" rel="stylesheet">
+
+	<style type="text/css">.ds-payment-way{text-align:center}.ds-payment-way label{cursor:pointer;line-height:30px;display:inline-block;margin:0 15px 0 0}.ds-payment-way input[type=radio]{vertical-align:middle;margin:-2px 5px 0 0}.ds-payment-img{margin:10px 0;text-align:center}.ds-payment-img img{margin:0 auto;width:185px;height:185px}.ds-payment-img #qrCode_1{display:none}.ds-payment-img #qrCode_2{display:none}.ds-payment-img .qrcode-border{margin:0 auto;border-radius:29.97px;width:236.89px;height:236.89px;padding:18.05px}.ds-payment-img .qrcode-tip{width:48.13px;position:relative;margin:0 auto;font-size:14px;font-weight:700;background:#fff;height:15px;line-height:15px;margin-top:-12px}#t-bei{width:100%;height:100%;position:fixed;top:0;left:0;background-color:#2d2d2d;z-index:100;opacity:.5}#t-opo{background:#fff;position:fixed;z-index:7000;width:334px;top:50%;left:50%;margin:-190px 0 0 -167px}#t-opo-title{height:30px;padding-left:10px;line-height:30px;border-bottom:1px solid #ddd}#t-opo-content{padding:10px}#tca,#tcaguan,#fenguan,#saoguan{position:absolute;right:10px;top:6px;font-size:12px}</style>
+</head>
+<body>
+    <div class="container-fluid">
+	<div class="row-fluid">
+		<div class="span12">
+			<h2>QQ坦白说查询</h2>
+			<h3>打开：<a href ="https://ti.qq.com/cgi-node/honest-say/receive/mine">https://ti.qq.com/cgi-node/honest-say/receive/mine</a> 复制内容到下面数据框里</h3><hr>
+				<fieldset>
+					<label>数据：</label>
+					<textarea class="form-control" type="text" id="json"></textarea>
+					<br>
+					<label>解析：</label>
+					<div style="height:400px;overlow:auto">
+					<table data-toggle="table" id="table" data-striped="true" pageSize="10"></table>
+					</div>
+					<button type="submit" class="btn btn-info" onclick="pop()">打赏给小姬姬！</button>
+				</fieldset>
+				
+		</div>
+	</div>
+</div>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap-table/1.11.1/bootstrap-table.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap-table/1.11.1/locale/bootstrap-table-zh-CN.min.js"></script>
+<script src="https://cdn.bootcss.com/layer/3.1.0/layer.js"></script>
+<script type="text/javascript">
+$('#table').bootstrapTable({
+	columns: [{
+		field: 'fromNick',
+		title: '发送人昵称',
+		align: 'center'
+	}, {
+		field: 'fromQQ',
+		title: '发送人QQ',
+		align: 'center'
+	}, {
+		field: 'topicName',
+		title: '标签',
+		align: 'center'
+	}]
+});
+$(document).ready(function(){
+	
+	$("#json").change(function(){
+		var json = JSON.parse($("#json").val());
+		$.each(json.data.list, function(i, item) {
+			console.log(item.fromEncodeUin);
+			$('#table').bootstrapTable('append',{
+				fromNick:item.fromNick,
+				fromQQ:decrypt(item.fromEncodeUin),
+				topicName:item.topicName,
+			});
+		});
+	});
+});
+
+
+//$.ajax({
+//	type:"post",
+//	url: "https://ti.qq.com/cgi-node/honest-say/receive/mine",
+//	dataType: "jsonp",
+//	async:true,
+//	success: function(data) {
+//		console.log(data);
+//		//$.each(data.data.list, function(i, item) {
+//		//	console.log(item.fromEncodeUin);
+//		//});
+//
+//	},
+//	error: function(a) {
+//
+//	}
+//});
+//console.log(decrypt("*S1*oKnP7iEiowEPNv"));
+function decrypt(a) {
+    a = a.replace('*S1*', '');
+	//console.log(a);
+    var b = [{
+            oe: '0',
+            oK: '1',
+            ow: '2',
+            oi: '3',
+            '7e': '4',
+            '7K': '5',
+            '7w': '6',
+            '7i': '7',
+            Ne: '8',
+            NK: '9'
+        }, {
+            4: '5',
+            6: '1',
+            n: '0',
+            '-': '2',
+            o: '3',
+            v: '4',
+            C: '6',
+            S: '7',
+            c: '8',
+            E: '9'
+        }, {
+            5: '1',
+            z: '0',
+            A: '2',
+            i: '3',
+            P: '4',
+            k: '5',
+            s: '6',
+            l: '7',
+            F: '8',
+            q: '9'
+        }],
+        c = [];
+    return a.split('').forEach(function (e, f) {
+        if (1 == f % 4) {
+            var g = c.pop();
+            c.push(g + e)
+        } else c.push(e)
+    }), c.map(function (e, f) {
+        return b[f % 3][e] || '*'
+    }).join('')
+}
+
+function pop() {
+		$('body').append('<div id="t-bei" ></div>'); 
+		
+		$('body').append('<div id="t-opo"><a href="javascript:void(0)" id="tca"><i class="fa fa-times"></i></a><div id="t-opo-title"><i class="fa fa-credit-card"></i>&nbsp;&nbsp;选择打赏方式</div><div id="t-opo-content"><div class="ds-payment-way"><label for="wechat"><input type="radio" id="wechat" class="reward-radio" value="0" checked="checked" name="reward-way">微信</label><label for="qqqb"><input type="radio" id="qqqb" class="reward-radio" value="1" name="reward-way">QQ钱包</label><label for="alipay"><input type="radio" id="alipay" class="reward-radio" value="2" name="reward-way">支付宝</label></div><div class="ds-payment-img"> <div class="qrcode-img qrCode_0" id="qrCode_0" style="display: block;"><div class="qrcode-border box-size" style="border: 9.02px solid rgb(60, 175, 54"><img class="qrcode-img qrCode_0" id="qrCode_0" src="//api.isoyu.com/pay/wechatpay.png" alt="微信赞助" style="display: inline;"></div><p class="qrcode-tip">打赏</p></div><div class="qrcode-img qrCode_1" id="qrCode_1" style="display: none;"><div class="qrcode-border box-size" style="border: 9.02px solid rgb(102, 153, 204"><img class="qrcode-img qrCode_1" id="qrCode_1" src="//api.isoyu.com/pay/qqpay.png" alt="QQ钱包" style="display: none;"></div><p class="qrcode-tip">打赏</p> </div> <div class="qrcode-img qrCode_2" id="qrCode_2" style="display: none;"><div class="qrcode-border box-size" style="border: 9.02px solid rgb(235, 95, 1"><img class="qrcode-img qrCode_2" id="qrCode_2" src="//api.isoyu.com/pay/zfbpay.png" alt="支付宝赞助" style="display: none;"></div><p class="qrcode-tip">打赏</p></div></div></div></div>');
+		//打赏
+		$("#ondashang").on("click", function(){$("#dashang").slideToggle(5);});
+		$("#tca").on("click", function(){$("#dashang").slideToggle(5);});
+		$(".ds-payment-way").bind("click",function(){
+			$(".qrcode-img").hide();
+			$(".qrCode_"+$(".ds-payment-way").find("input[name=reward-way]:checked").val()).show();
+		});
+		$('#tca').click(function() {
+			$('#t-opo,#t-bei').remove();
+		});
+	};
+</script>
+<span style="display:none;"><script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?25455fcfa9d6eeb40df54cb665afaba8";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script></span><a target="_blank" href="https://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=2_ri6e3t7ejs45uqqvW4tLY" style="text-decoration:none;"><img src="https://rescdn.qqmail.com/zh_CN/htmledition/images/function/qm_open/ico_mailme_12.png"/></a><script>
+        (function(){
+            var bp = document.createElement('script');
+            var curProtocol = window.location.protocol.split(':')[0];
+            if (curProtocol === 'https') {
+                bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+            }
+            else {
+                bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+            }
+            var s = document.getElementsByTagName(\"script\")[0];
+            s.parentNode.insertBefore(bp, s);
+        })();
+    </script>
+<script>
+(function(){
+   var src = (document.location.protocol == "http:") ? "https://js.passport.ssl.qihucdn.com/11.0.1.js?44b15328867d3a79487b4a7fabcef0aa":"https://jspassport.ssl.qhimg.com/11.0.1.js?44b15328867d3a79487b4a7fabcef0aa";
+   document.write('<script src="' + src + '" id="sozz"><\/script>');
+})();
+</script>
+</body>
+</html>
